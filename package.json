@@ -1,0 +1,24 @@
+{
+  "name": "ealumina-contactos",
+  "version": "1.0.0",
+  "description": "Plataforma colaborativa para gestionar contactos integrada con Supabase",
+  "main": "index.html",
+  "scripts": {
+    "dev": "python -m http.server 8000",
+    "build": "echo 'No build required for static site'",
+    "start": "python -m http.server 8000"
+  },
+  "keywords": [
+    "contactos",
+    "supabase",
+    "crm",
+    "gestión de contactos",
+    "ealumina"
+  ],
+  "author": "ealumina",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tu-usuario/ealumina-contactos.git"
+  }
+}

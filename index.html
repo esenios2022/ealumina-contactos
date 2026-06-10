@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>eAlumina Contactos</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1e40af;
+      --success: #10b981;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --neutral-50: #f9fafb;
+      --neutral-100: #f3f4f6;
+      --neutral-200: #e5e7eb;
+      --neutral-300: #d1d5db;
+      --neutral-700: #374151;
+      --neutral-900: #111827;
+      --text-secondary: #6b7280;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+      color: var(--neutral-900);
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .container { max-width: 1200px; margin: 0 auto; }
+    .header { background: white; padding: 32px 0; border-bottom: 1px solid var(--neutral-200); margin-bottom: 32px; }
+    .header-content { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+    .header h1 { font-size: 32px; font-weight: 700; margin-bottom: 8px; }
+    .header p { font-size: 14px; color: var(--text-secondary); }
+    .main-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 24px; margin-bottom: 32px; }
+    @media (max-width: 1024px) { .main-grid { grid-template-columns: 1fr; } }
+    .card { background: white; border-radius: 12px; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid var(--neutral-100); }
+    .card-title { font-size: 18px; font-weight: 600; margin-bottom: 20px; color: var(--neutral-900); padding-bottom: 12px; border-bottom: 2px solid var(--primary); }
+    .tabs { display: flex; gap: 0; margin-bottom: 24px; border-bottom: 1px solid var(--neutral-200); overflow-x: auto; }
+    .tab { padding: 12px 16px; background: none; border: none; cursor: pointer; font-size: 14px; font-weight: 500; color: var(--text-secondary); border-bottom: 2px solid transparent; white-space: nowrap; }
+    .tab:hover { color: var(--primary); }
+    .tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: var(--neutral-700); text-transform: uppercase; }
+    .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 10px 12px; border: 1px solid var(--neutral-300); border-radius: 8px; font-size: 14px; font-family: inherit; }
+    .form-group input:focus, .form-group textarea:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+    .button { width: 100%; padding: 10px 16px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .button:hover { background: var(--primary-dark); }
+    .button:disabled { background: var(--neutral-300); opacity: 0.6; }
+    .alert { padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; font-size: 13px; display: flex; gap: 12px; }
+    .alert-success { background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.3); color: #047857; }
+    .alert-error { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); color: #991b1b; }
+    .alert-info { background: rgba(37,99,235,0.1); border: 1px solid rgba(37,99,235,0.3); color: #1e40af; }
+    .file-input-label { display: block; padding: 16px; border: 2px dashed var(--neutral-300); border-radius: 8px; text-align: center; cursor: pointer; background: var(--neutral-50); transition: all 0.2s; }
+    .file-input-label:hover { border-color: var(--primary); background: rgba(37,99,235,0.05); }
+    .file-input-label.drag-over { border-color: var(--primary); background: rgba(37,99,235,0.1); }
+    .file-input-wrapper input { display: none; }
+    .contacts-grid { display: grid; gap: 12px; max-height: 600px; overflow-y: auto; }
+    .contact-item { padding: 16px; background: var(--neutral-50); border: 1px solid var(--neutral-200); border-radius: 8px; }
+    .contact-item:hover { background: white; border-color: var(--primary); }
+    .contact-name { font-weight: 600; margin-bottom: 4px; }
+    .contact-detail { font-size: 13px; color: var(--text-secondary); margin: 2px 0; }
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 24px; }
+    .stat-card { background: var(--neutral-50); padding: 16px; border-radius: 8px; border: 1px solid var(--neutral-200); }
+    .stat-label { font-size: 12px; color: var(--text-secondary); text-transform: uppercase; font-weight: 600; margin-bottom: 6px; }
+    .stat-value { font-size: 28px; font-weight: 700; color: var(--primary); }
+    .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(37,99,235,0.3); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.6s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    .empty-state { text-align: center; padding: 48px 20px; color: var(--text-secondary); }
+    .empty-state-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.5; }
+    .progress-bar { width: 100%; height: 6px; background: var(--neutral-200); border-radius: 3px; overflow: hidden; margin-top: 8px; }
+    .progress-fill { height: 100%; background: var(--primary); transition: width 0.3s; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="header-content">
+      <h1>📇 eAlumina Contactos</h1>
+      <p>Plataforma colaborativa para gestionar contactos • Integrada con Supabase</p>
+    </div>
+  </div>
+
+  <div class="container">
+    <div id="alerts-container"></div>
+
+    <div class="main-grid">
+      <div>
+        <div class="card">
+          <div class="card-title">Agregar Contactos</div>
+          
+          <div class="tabs">
+            <button class="tab active" data-tab="form">Manual</button>
+            <button class="tab" data-tab="upload">Importar Archivo</button>
+            <button class="tab" data-tab="share">Compartir</button>
+          </div>
+
+          <div id="form-section" class="tab-content active">
+            <form id="contact-form">
+              <div class="form-group">
+                <label for="nombre">Nombre</label>
+                <input type="text" id="nombre" placeholder="Ej: Juan García">
+              </div>
+              <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" placeholder="ej: juan@ejemplo.com">
+              </div>
+              <div class="form-group">
+                <label for="telefono">Teléfono</label>
+                <input type="tel" id="telefono" placeholder="Ej: +34 666 777 888">
+              </div>
+              <div class="form-group">
+                <label for="estado">Notas</label>
+                <textarea id="estado" placeholder="Información adicional..." style="min-height: 80px;"></textarea>
+              </div>
+              <button type="submit" class="button">➕ Agregar Contacto</button>
+            </form>
+          </div>
+
+          <div id="upload-section" class="tab-content">
+            <div class="file-input-wrapper">
+              <label for="file-input" class="file-input-label">
+                <div>📤 Arrastra tu archivo aquí o haz clic</div>
+                <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">CSV, Excel (.xlsx), OpenDocument (.ods)</div>
+              </label>
+              <input type="file" id="file-input" accept=".csv,.xlsx,.xls,.ods">
+            </div>
+            <div class="form-group" style="margin-top: 16px;">
+              <label for="encoding">Codificación</label>
+              <select id="encoding">
+                <option value="utf-8">UTF-8</option>
+                <option value="iso-8859-1">ISO-8859-1</option>
+                <option value="cp1252">Windows-1252</option>
+              </select>
+            </div>
+            <button id="upload-btn" class="button" disabled>⬆️ Procesar Archivo</button>
+            <div id="upload-progress" style="display: none; margin-top: 16px;">
+              <div style="font-size: 13px; margin-bottom: 8px;">Procesando: <span id="progress-text">0/0</span></div>
+              <div class="progress-bar"><div id="progress-fill" class="progress-fill" style="width: 0%;"></div></div>
+            </div>
+          </div>
+
+          <div id="share-section" class="tab-content">
+            <div style="background: var(--neutral-50); padding: 16px; border-radius: 8px; border: 1px solid var(--neutral-200);">
+              <div style="font-weight: 600; font-size: 13px; margin-bottom: 12px;">🔗 Link para compartir</div>
+              <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+                <input type="text" id="share-link" readonly style="flex: 1; padding: 8px 12px; border: 1px solid var(--neutral-300); border-radius: 8px; font-size: 12px; font-family: 'Courier New', monospace;">
+                <button class="button" style="width: auto; padding: 8px 16px;" onclick="copyShareLink()">Copiar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top: 24px;">
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-label">Total</div>
+              <div class="stat-value" id="total-contacts">0</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Hoy</div>
+              <div class="stat-value" id="today-contacts">0</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Con Email</div>
+              <div class="stat-value" id="email-contacts">0</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Con Teléfono</div>
+              <div class="stat-value" id="phone-contacts">0</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="card">
+          <div class="card-title">Contactos</div>
+
+          <div class="tabs">
+            <button class="tab active" data-tab="list">Listado</button>
+            <button class="tab" data-tab="duplicates">Duplicados</button>
+            <button class="tab" data-tab="incompletos">Incompletos</button>
+          </div>
+
+          <div id="list-section" class="tab-content active">
+            <div style="margin-bottom: 20px;">
+              <input type="text" id="search-input" placeholder="🔍 Buscar..." style="width: 100%; padding: 12px 16px; border: 1px solid var(--neutral-300); border-radius: 8px; font-size: 14px;">
+            </div>
+            <div id="contacts-list" class="contacts-grid">
+              <div class="empty-state"><div class="empty-state-icon">📭</div><div>No hay contactos aún</div></div>
+            </div>
+          </div>
+
+          <div id="duplicates-section" class="tab-content">
+            <div id="duplicates-list">
+              <div class="empty-state"><div class="empty-state-icon">✅</div><div>Sin duplicados detectados</div></div>
+            </div>
+          </div>
+
+          <div id="incompletos-section" class="tab-content">
+            <div id="incompletos-list">
+              <div class="empty-state"><div class="empty-state-icon">📋</div><div>Sin contactos incompletos</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const CONFIG = {
+      SUPABASE_URL: 'https://udtenqjlofjduuwffjja.supabase.co',
+      SUPABASE_ANON_KEY: 'sb_publishable_JpIAa1iXYAyOVMLBlpBp6w_D8BaSKer'
+    };
+
+    let allContacts = [];
+    let filteredContacts = [];
+    let selectedFile = null;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      setupEventListeners();
+      updateShareLink();
+      loadContacts();
+    });
+
+    function setupEventListeners() {
+      document.querySelectorAll('.tab').forEach(tab => {
+        tab.addEventListener('click', handleTabClick);
+      });
+      document.getElementById('contact-form').addEventListener('submit', handleFormSubmit);
+      document.getElementById('search-input').addEventListener('input', handleSearch);
+      
+      const fileInput = document.getElementById('file-input');
+      const fileLabel = document.querySelector('.file-input-label');
+      fileInput.addEventListener('change', (e) => {
+        selectedFile = e.target.files[0];
+        updateFileLabel();
+      });
+      fileLabel.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        fileLabel.classList.add('drag-over');
+      });
+      fileLabel.addEventListener('dragleave', () => {
+        fileLabel.classList.remove('drag-over');
+      });
+      fileLabel.addEventListener('drop', (e) => {
+        e.preventDefault();
+        fileLabel.classList.remove('drag-over');
+        selectedFile = e.dataTransfer.files[0];
+        fileInput.files = e.dataTransfer.files;
+        updateFileLabel();
+      });
+      document.getElementById('upload-btn').addEventListener('click', handleFileUpload);
+    }
+
+    function handleTabClick(e) {
+      const tabName = e.target.dataset.tab;
+      const tabGroup = e.target.parentElement;
+      tabGroup.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+      tabGroup.parentElement.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      e.target.classList.add('active');
+      document.getElementById(tabName + '-section').classList.add('active');
+      if (tabName === 'duplicates') renderDuplicates();
+      if (tabName === 'incompletos') renderIncompletos();
+    }
+
+    function showAlert(message, type = 'info', duration = 5000) {
+      const alertsContainer = document.getElementById('alerts-container');
+      const alert = document.createElement('div');
+      alert.className = `alert alert-${type}`;
+      alert.innerHTML = `<div style="flex: 1;">${message}</div><button style="background: none; border: none; cursor: pointer; font-size: 16px;">✕</button>`;
+      alert.querySelector('button').addEventListener('click', () => alert.remove());
+      alertsContainer.appendChild(alert);
+      if (duration > 0) setTimeout(() => alert.remove(), duration);
+    }
+
+    function updateFileLabel() {
+      const fileLabel = document.querySelector('.file-input-label');
+      const uploadBtn = document.getElementById('upload-btn');
+      if (selectedFile) {
+        fileLabel.innerHTML = `<div>✅ ${selectedFile.name}</div><div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">${(selectedFile.size / 1024 / 1024).toFixed(2)} MB</div>`;
+        uploadBtn.disabled = false;
+      } else {
+        uploadBtn.disabled = true;
+      }
+    }
+
+    function updateShareLink() {
+      document.getElementById('share-link').value = window.location.href.split('?')[0];
+    }
+
+    function copyShareLink() {
+      const shareLink = document.getElementById('share-link');
+      shareLink.select();
+      document.execCommand('copy');
+      showAlert('✅ Link copiado', 'success', 3000);
+    }
+
+    async function handleFormSubmit(e) {
+      e.preventDefault();
+      const nombre = document.getElementById('nombre').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const telefono = document.getElementById('telefono').value.trim();
+      const estado = document.getElementById('estado').value.trim();
+
+      if (!nombre && !email && !telefono) {
+        showAlert('Completa al menos uno: nombre, email o teléfono', 'error');
+        return;
+      }
+
+      const btn = e.target.querySelector('button');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span> Guardando...';
+
+      try {
+        const response = await fetch(`${CONFIG.SUPABASE_URL}/rest/v1/contactos`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey': CONFIG.SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${CONFIG.SUPABASE_ANON_KEY}`,
+          },
+          body: JSON.stringify({ nombre: nombre || null, email: email || null, telefono: telefono || null, estado: estado || null }),
+        });
+
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.message || `Error ${response.status}`);
+        }
+
+        showAlert('✅ Contacto agregado', 'success');
+        document.getElementById('contact-form').reset();
+        await loadContacts();
+      } catch (error) {
+        showAlert(`❌ ${error.message}`, 'error');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '➕ Agregar Contacto';
+      }
+    }
+
+    async function handleFileUpload() {
+      if (!selectedFile) return;
+      const uploadBtn = document.getElementById('upload-btn');
+      const progressSection = document.getElementById('upload-progress');
+      const encoding = document.getElementById('encoding').value;
+
+      uploadBtn.disabled = true;
+      progressSection.style.display = 'block';
+
+      try {
+        const rows = await parseFile(selectedFile, encoding);
+        if (rows.length === 0) {
+          showAlert('No se encontraron datos', 'error');
+          return;
+        }
+
+        const validatedRows = validateRows(rows);
+        const totalRows = validatedRows.length;
+        let added = 0, merged = 0, skipped = 0;
+
+        for (let i = 0; i < validatedRows.length; i++) {
+          const row = validatedRows[i];
+          const response = await fetch(`${CONFIG.SUPABASE_URL}/rest/v1/contactos`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'apikey': CONFIG.SUPABASE_ANON_KEY,
+              'Authorization': `Bearer ${CONFIG.SUPABASE_ANON_KEY}`,
+            },
+            body: JSON.stringify(row),
+          });
+
+          if (response.ok) added++;
+          else skipped++;
+
+          document.getElementById('progress-text').textContent = `${i + 1}/${totalRows}`;
+          document.getElementById('progress-fill').style.width = `${((i + 1) / totalRows) * 100}%`;
+        }
+
+        showAlert(`✅ ${added} contactos importados`, 'success');
+        selectedFile = null;
+        updateFileLabel();
+        progressSection.style.display = 'none';
+        document.getElementById('file-input').value = '';
+        document.querySelector('[data-tab="form"]').click();
+        await loadContacts();
+      } catch (error) {
+        showAlert(`❌ ${error.message}`, 'error');
+      } finally {
+        uploadBtn.disabled = false;
+      }
+    }
+
+    async function parseFile(file, encoding) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const content = e.target.result;
+          const filename = file.name.toLowerCase();
+          let rows = [];
+          if (filename.endsWith('.csv')) {
+            const lines = content.split('\n').filter(l => l.trim());
+            if (lines.length < 2) { resolve([]); return; }
+            const delimiter = lines[0].includes(';') ? ';' : ',';
+            const headers = lines[0].split(delimiter).map(h => normalizeHeader(h.trim().toLowerCase()));
+            for (let i = 1; i < lines.length; i++) {
+              const values = lines[i].split(delimiter).map(v => v.trim());
+              const row = {};
+              headers.forEach((header, idx) => { if (header) row[header] = values[idx] || null; });
+              rows.push(row);
+            }
+          }
+          resolve(rows);
+        };
+        reader.onerror = () => reject(new Error('Error al leer archivo'));
+        reader.readAsText(file, encoding);
+      });
+    }
+
+    function normalizeHeader(header) {
+      const normalized = header.toLowerCase().replace(/[^a-z0-9]/g, '');
+      if (normalized.includes('nombre') || normalized.includes('name')) return 'nombre';
+      if (normalized.includes('email') || normalized.includes('correo')) return 'email';
+      if (normalized.includes('telefono') || normalized.includes('phone') || normalized.includes('cel') || normalized.includes('whatsapp')) return 'telefono';
+      if (normalized.includes('estado') || normalized.includes('nota')) return 'estado';
+      return null;
+    }
+
+    function validateRows(rows) {
+      return rows.filter(row => (row.nombre && row.nombre.trim()) || (row.email && row.email.trim()) || (row.telefono && row.telefono.trim())).map(row => ({ nombre: row.nombre || null, email: row.email || null, telefono: row.telefono || null, estado: row.estado || null }));
+    }
+
+    async function loadContacts() {
+      try {
+        const response = await fetch(`${CONFIG.SUPABASE_URL}/rest/v1/contactos?order=created_at.desc`, {
+          headers: { 'apikey': CONFIG.SUPABASE_ANON_KEY, 'Authorization': `Bearer ${CONFIG.SUPABASE_ANON_KEY}`, },
+        });
+        if (!response.ok) throw new Error('Error loading contacts');
+        allContacts = await response.json();
+        filteredContacts = [...allContacts];
+        renderContacts();
+        updateStats();
+      } catch (error) {
+        showAlert(`❌ ${error.message}`, 'error');
+      }
+    }
+
+    function handleSearch(e) {
+      const query = e.target.value.toLowerCase();
+      filteredContacts = allContacts.filter(contact =>
+        (contact.nombre && contact.nombre.toLowerCase().includes(query)) ||
+        (contact.email && contact.email.toLowerCase().includes(query)) ||
+        (contact.telefono && contact.telefono.toLowerCase().includes(query))
+      );
+      renderContacts();
+    }
+
+    function renderContacts() {
+      const list = document.getElementById('contacts-list');
+      if (filteredContacts.length === 0) {
+        list.innerHTML = `<div class="empty-state"><div class="empty-state-icon">📭</div><div>${allContacts.length === 0 ? 'No hay contactos' : 'Sin resultados'}</div></div>`;
+        return;
+      }
+      list.innerHTML = filteredContacts.map(c => `
+        <div class="contact-item">
+          <div><div class="contact-name">${c.nombre || '(Sin nombre)'}</div>
+          ${c.email ? `<div class="contact-detail">📧 ${c.email}</div>` : ''}
+          ${c.telefono ? `<div class="contact-detail">📱 ${c.telefono}</div>` : ''}
+          ${c.estado ? `<div class="contact-detail">📝 ${c.estado}</div>` : ''}
+          <div class="contact-detail" style="font-size: 12px; margin-top: 8px; color: #9ca3af;">${new Date(c.created_at).toLocaleDateString('es-ES')}</div></div>
+        </div>
+      `).join('');
+    }
+
+    function renderDuplicates() {
+      const emailMap = {}, phoneMap = {};
+      let duplicateGroups = [];
+      allContacts.forEach(contact => {
+        if (contact.email) { if (!emailMap[contact.email]) emailMap[contact.email] = []; emailMap[contact.email].push(contact); }
+        if (contact.telefono) { if (!phoneMap[contact.telefono]) phoneMap[contact.telefono] = []; phoneMap[contact.telefono].push(contact); }
+      });
+      Object.values(emailMap).forEach(group => { if (group.length > 1) duplicateGroups.push(group); });
+      Object.values(phoneMap).forEach(group => { if (group.length > 1 && !duplicateGroups.some(dg => dg.some(c1 => group.some(c2 => c1.id === c2.id)))) duplicateGroups.push(group); });
+      const duplicatesList = document.getElementById('duplicates-list');
+      if (duplicateGroups.length === 0) {
+        duplicatesList.innerHTML = `<div class="empty-state"><div class="empty-state-icon">✅</div><div>Sin duplicados</div></div>`;
+        return;
+      }
+      duplicatesList.innerHTML = duplicateGroups.map((group, idx) => `
+        <div class="contact-item" style="background: rgba(239,68,68,0.05); border: 1px solid rgba(239,68,68,0.2);">
+          <div style="font-weight: 600; color: var(--danger); margin-bottom: 12px;">Grupo ${idx + 1}: ${group.length} duplicados</div>
+          ${group.map(c => `<div style="padding: 8px; background: white; border-radius: 4px; margin-bottom: 8px; font-size: 13px;"><strong>${c.nombre || '(Sin nombre)'}</strong><br>${c.email ? `📧 ${c.email}<br>` : ''}${c.telefono ? `📱 ${c.telefono}` : ''}</div>`).join('')}
+        </div>
+      `).join('');
+    }
+
+    function renderIncompletos() {
+      const incompletos = allContacts.filter(c => (!c.nombre || !c.nombre.trim()) || (!c.email || !c.email.trim()) || (!c.telefono || !c.telefono.trim()));
+      const incompletosList = document.getElementById('incompletos-list');
+      if (incompletos.length === 0) {
+        incompletosList.innerHTML = `<div class="empty-state"><div class="empty-state-icon">📋</div><div>Sin incompletos</div></div>`;
+        return;
+      }
+      incompletosList.innerHTML = incompletos.map(c => {
+        const missing = [];
+        if (!c.nombre || !c.nombre.trim()) missing.push('Nombre');
+        if (!c.email || !c.email.trim()) missing.push('Email');
+        if (!c.telefono || !c.telefono.trim()) missing.push('Teléfono');
+        return `
+          <div class="contact-item" style="background: rgba(245,158,11,0.05); border: 1px solid rgba(245,158,11,0.2);">
+            <div><div style="font-weight: 600; color: var(--warning); margin-bottom: 8px;">Falta: ${missing.join(', ')}</div>
+            <div style="padding: 8px; background: white; border-radius: 4px; font-size: 13px;"><strong>${c.nombre || '(Sin nombre)'}</strong><br>${c.email ? `📧 ${c.email}<br>` : ''}${c.telefono ? `📱 ${c.telefono}` : ''}</div></div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function updateStats() {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const todayCount = allContacts.filter(c => { const created = new Date(c.created_at); created.setHours(0, 0, 0, 0); return created.getTime() === today.getTime(); }).length;
+      const emailCount = allContacts.filter(c => c.email && c.email.trim()).length;
+      const phoneCount = allContacts.filter(c => c.telefono && c.telefono.trim()).length;
+      document.getElementById('total-contacts').textContent = allContacts.length;
+      document.getElementById('today-contacts').textContent = todayCount;
+      document.getElementById('email-contacts').textContent = emailCount;
+      document.getElementById('phone-contacts').textContent = phoneCount;
+    }
+  </script>
+</body>
+</html>
