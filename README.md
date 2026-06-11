@@ -1,4 +1,4 @@
-# 📇 eAlumina Contactos - Plataforma Colaborativa
+# 📇 eAlumina Contactos - Plataforma Colaborativa 
 
 Plataforma de gestión de contactos integrada con Supabase. Permite agregar, importar y compartir contactos de forma colaborativa.
 
